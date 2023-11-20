@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Game Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+</head>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('form').submit(function (event) {
+            // Evitar que el formulario se envíe normalmente
+            event.preventDefault();
+
+            // Realizar la solicitud POST con los géneros seleccionados
+            $.ajax({
+                type: 'POST',
+                url: '/search',
+                data: $('form').serialize(),
+                success: function (response) {
+                    // Manejar la respuesta JSON
+                    var games = JSON.parse(response);
+
+                    // Limpiar resultados anteriores
+                    $('#search-results').empty();
+
+                    // Mostrar los nuevos resultados
+                    for (var i = 0; i < games.length; i++) {
+                        $('#search-results').append('<li>' + games[i].name + ' - ' + games[i].genres + '</li>');
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
+</script>
+<body>
+    <h1>Video Game Search</h1>
+    <form>
+        <label for="genres_input">Ingrese la lista de géneros separados por comas:</label>
+        <input type="text" name="genres_input" id="genres_input">
+        <input type="submit" value="Buscar">
+    </form>
+
+    <h2>Resultados de la búsqueda:</h2>
+    <ul id="search-results"></ul>
+</body>
+</html>
